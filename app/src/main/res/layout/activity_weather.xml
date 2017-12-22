@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <LinearLayout
+        android:id="@+id/menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#fff"
+        android:orientation="vertical"
+        android:layout_gravity="bottom">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="#c3c3c3"
+            android:layout_gravity="center_horizontal"/>
+        <Button
+            android:id="@+id/add_city"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/button_add_city" />
+    </LinearLayout>
+</FrameLayout>

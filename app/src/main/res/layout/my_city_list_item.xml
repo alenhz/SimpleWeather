@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="2dp"
+    android:layout_margin="8dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <Button
+            android:id="@+id/my_city_list_item_delete_button"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginLeft="15dp"
+            android:background="@drawable/button_inline_delete"
+            android:visibility="gone"/>
+        <LinearLayout
+            android:layout_margin="15dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/my_city_list_item_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:textColor="#737373"
+                    android:text="长港路"/>
+                <ImageView
+                    android:id="@+id/my_city_list_item_location_image"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/icon_location"
+                    android:visibility="gone"
+                    />
+            </LinearLayout>
+            <TextView
+                android:id="@+id/my_city_list_item_superiors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="武汉 江汉区"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingRight="15dp"
+            >
+            <ImageView
+                android:id="@+id/my_city_list_item_code_image"
+                android:layout_width="18dp"
+                android:layout_height="33dp"
+                android:paddingBottom="15dp" />
+            <TextView
+                android:id="@+id/my_city_list_item_tmp"
+                android:paddingLeft="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#737373"
+                android:textSize="52sp"
+                android:text="8" />
+            <TextView
+                android:id="@+id/my_city_list_item_CL01"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
+                android:textSize="14sp"
+                android:textColor="#737373"
+                android:text="℃"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>

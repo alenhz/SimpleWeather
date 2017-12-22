@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ForecastView">
+        <attr name="txtSize" format="dimension"></attr> <!--温度的文本大小-->
+
+        <attr name="dotRadiu" format="dimension"></attr> <!--所有圆点的半径 -->
+        <attr name="todayDotRadiu" format="dimension"></attr> <!--今天的圆点半径-->
+
+        <attr name="dotColor" format="color"></attr> <!--设置所有圆点的颜色-->
+        <attr name="highDotColor" format="color"></attr> <!--设置高温圆点的颜色-->
+        <attr name="lowDotColor" format="color"></attr> <!--设置低温圆点的颜色-->
+        <attr name="todayHighDotColor" format="color"></attr> <!--设置今天高温圆点的颜色-->
+        <attr name="todayLowDotColor" format="color"></attr> <!--设置今天低温圆点的颜色-->
+
+
+        <attr name="txtToBorder" format="dimension"></attr><!--设置高低温度文本边缘到边界的距离-->
+        <attr name="txtToDot" format="dimension"></attr><!--设置高低温度文本边缘到高低温圆点的距离-->
+
+        <attr name="txtColor" format="color"></attr><!--设置高低温文本的颜色-->
+        <attr name="highTxtColor" format="color"></attr><!--设置高温文本的颜色-->
+        <attr name="lowTxtColor" format="color"></attr><!--设置低温文本的颜色-->
+        <attr name="todayHighTxtColor" format="color"></attr><!--设置今天高温文本的颜色-->
+        <attr name="todayLowTxtColor" format="color"></attr><!--设置今天低温文本的颜色-->
+
+        <attr name="lineColor" format="color"></attr><!--设置所有线的颜色 -->
+        <attr name="highLineColor" format="color"></attr><!--设置高温线的颜色-->
+        <attr name="lowLineColor" format="color"></attr><!--设置低温线的颜色 -->
+        <attr name="leftHighLineColor" format="color"></attr><!--设置左边高温线的颜色-->
+        <attr name="rightHighLineColor" format="color"></attr><!--设置右边高温线的颜色-->
+        <attr name="leftLowLineColor" format="color"></attr><!--设置左边低温线的颜色-->
+        <attr name="rightLowLineColor" format="color"></attr><!--设置右边低温线的颜色-->
+        <attr name="lineStrokWidth" format="dimension"></attr><!--设置高低温度线的线条宽度-->
+
+        <attr name="haveMiddleLine" format="boolean"></attr><!--设置中间线显示-->
+        <attr name="middleLineColor" format="color"></attr><!--设置中间线颜色-->
+        <attr name="middleLineStrokeWidth" format="dimension"></attr><!--设置中间线的线条宽度-->
+
+        <attr name="width" format="dimension"></attr><!--设置view的宽度-->
+        <attr name="height" format="dimension"></attr><!--设置view的高度-->
+
+        <attr name="backgroundColor" format="color"></attr><!--设置view的背景色-->
+
+        <attr name="istoday" format="boolean"></attr><!--设置是否为今天-->
+    </declare-styleable>
+</resources>

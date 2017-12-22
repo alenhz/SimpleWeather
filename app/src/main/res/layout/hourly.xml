@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <com.alen.simpleweather.view.WeatherView
+        android:id="@+id/hourly_view"
+        android:layout_width="70dp"
+        android:layout_height="110dp" />
+    <TextView
+        android:id="@+id/hourly_precipitation"
+        android:layout_marginTop="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="12dp"
+        android:text="小雨"/>
+    <TextView
+        android:id="@+id/hourly_aqi"
+        android:layout_width="45dp"
+        android:layout_height="20dp"
+        android:textSize="10dp"
+        android:background="@drawable/aqi1"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:paddingTop="3dp"
+        android:textColor="#fff"
+        android:text="195 中度"/>
+    <View
+        android:layout_marginTop="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#c1c1c1"
+        android:layout_gravity="center_horizontal" />
+    <View
+        android:layout_width="1px"
+        android:layout_height="5dp"
+        android:background="#c1c1c1"
+        android:layout_gravity="center_horizontal" />
+    <TextView
+        android:id="@+id/hourly_time"
+        android:layout_marginTop="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="22:00"
+        android:textSize="12dp"
+        android:textColor="#5a5a5a"/>
+</LinearLayout>

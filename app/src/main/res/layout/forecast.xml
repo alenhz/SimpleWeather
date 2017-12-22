@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/forecast_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="昨天"
+        android:layout_marginTop="5dp"
+        android:textSize="12dp"
+        android:textColor="#000"/>
+    <TextView
+        android:id="@+id/forecast_date"
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:text="11月22日"
+        android:textSize="10dp"
+        android:layout_marginBottom="5dp"
+        android:gravity="center_horizontal"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#c1c1c1"
+        android:layout_gravity="center_horizontal" />
+    <ImageView
+        android:id="@+id/image_d"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="5dp"
+        android:src="@drawable/icon_100" />
+    <TextView
+        android:id="@+id/forecast_weather_d"
+        android:layout_marginTop="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="12dp"
+        android:text="晴"/>
+    <com.alen.simpleweather.view.WeatherView
+        android:id="@+id/forecast_view"
+        android:layout_width="80dp"
+        android:layout_height="110dp" />
+    <ImageView
+        android:id="@+id/image_n"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/icon_100_n"/>
+    <TextView
+        android:id="@+id/forecast_weather_n"
+        android:layout_marginTop="1dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="12dp"
+        android:text="晴"/>
+    <TextView
+        android:id="@+id/forecast_wind_dir"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000"
+        android:textSize="12dp"
+        android:text="北风"/>
+    <TextView
+        android:id="@+id/forecast_wind_sc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12dp"
+        android:text="4级"/>
+    <View
+        android:layout_marginTop="5dp"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#c1c1c1"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:layout_gravity="center"
+    android:background="@drawable/button_my_city_list_back"
+    android:orientation="horizontal"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:layout_margin="4dp">
+    <TextView
+        android:id="@+id/hot_city_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="定位"
+        android:lines="1"
+        android:textColor="#000"/>
+    <ImageView
+        android:id="@+id/hot_city_location_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_location"
+        android:paddingLeft="3dp"
+        android:visibility="gone"/>
+</LinearLayout>

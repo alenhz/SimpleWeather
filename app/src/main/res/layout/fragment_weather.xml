@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="-100dp"
+        android:adjustViewBounds="true"
+        android:fitsSystemWindows="true"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bg_02" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:srlEnablePreviewInEditMode="true"
+        app:srlEnableOverScrollBounce="false"
+        app:srlDragRate="1"
+        app:srlEnableLoadmore="false"
+        app:srlFooterMaxDragRate="0"
+        app:srlHeaderHeight="60dp"
+        app:srlHeaderMaxDragRate="1.5">
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:srlAccentColor="@android:color/white"
+            app:srlTextSizeTitle="14sp"
+            app:srlTextSizeTime="10dp"
+            app:srlDrawableSize="15dp" />
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/bindablescrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+                <include layout="@layout/title"/>
+                <LinearLayout
+                    android:id="@+id/title_null_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+                    <TextView
+                        android:id="@+id/activity_weather_text_CL01"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        android:layout_marginTop="400dp"
+                        android:text="请尝试手动下拉刷新天气数据或检查网络连接"
+                        android:textColor="#000"
+                        android:background="#fafafa"
+                        android:gravity="center"
+                        android:layout_gravity="bottom" />
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/info_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:background="#fff">
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/forecast_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/description_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="明天上午晴"
+                        android:textColor="#000"
+                        android:textSize="12dp"
+                        android:gravity="center_horizontal"
+                        android:paddingTop="10dp"/>
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/hourly_recyclerview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="#c3c3c3"
+                        android:layout_gravity="center_horizontal" />
+                    <include layout="@layout/life"/>
+                </LinearLayout>
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        app:contentInsetLeft="0dp"
+        app:contentInsetStart="0dp"
+        android:background="#fff"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:alpha="0">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:paddingTop="10dp">
+            <ImageView
+                android:id="@+id/now_weather_code_image"
+                android:layout_width="wrap_content"
+                android:layout_height="18dp"
+                />
+            <TextView
+                android:id="@+id/now_title_info_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#000"/>
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+</FrameLayout>
