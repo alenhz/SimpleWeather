@@ -2,6 +2,7 @@ package com.alen.simpleweather;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -89,12 +90,7 @@ public class SearchCityActivity extends AppCompatActivity {
 
 
         //设置透明状态栏
-        if (Build.VERSION.SDK_INT >= 21) {
-            View decorView = getWindow().getDecorView();
-            int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE ;
-            decorView.setSystemUiVisibility(option);
-            getWindow().setStatusBarColor(Color.TRANSPARENT);
-        }
+        Utility.statusBar(getWindow());
     }
     private void setSearch(){
         add_city_search.setIconified(false);
@@ -118,7 +114,13 @@ public class SearchCityActivity extends AppCompatActivity {
         hotCityAdapter.setItemClickListener(new HotCityAdapter.MyItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
-                add_city_search.setQuery(hotCityList[position], true);
+                if (position == 0){
+                    Intent intent = new Intent(SearchCityActivity.this, WeatherActivity.class);
+                    startActivity(intent);
+                    finish();
+                }else {
+                    add_city_search.setQuery(hotCityList[position], true);
+                }
             }
         });
         add_city_search.setOnCloseListener(new SearchView.OnCloseListener() {
@@ -211,13 +213,8 @@ public class SearchCityActivity extends AppCompatActivity {
             @Override
             public void onItemClick(View view, int position) {
                 CityList cityList = datas.get(position);
-                List<MyCity> list = new ArrayList<MyCity>();
                 if (cityList.judge.equals("n")){
-                    String listTxt = Utility.getPrefe(context, "list", "list");
-                    if (listTxt != null){
-                        list = new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
-                    }
-                    upDataMyList(list, cityList);
+                    Utility.saveList(context, -1, cityList.cn, cityList.province, cityList.city, cityList.lonlat);
                     ContentValues cv = new ContentValues();
                     cv.put("judge","y");
                     database.update("list", cv, "lonlat = ?", new String[]{cityList.lonlat});
@@ -227,13 +224,6 @@ public class SearchCityActivity extends AppCompatActivity {
             }
         });
         return true;
-    }
-
-    private void upDataMyList(List<MyCity> list, CityList cityList){
-        list.add(new MyCity(cityList.cn, cityList.province, cityList.city, cityList.lonlat));
-        String json = new Gson().toJson(list);
-        Log.d("json", "upDataMyList: "+json);
-        Utility.setPrefe(context, "list", "list", json);
     }
     @Override
     public void onBackPressed() {

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
@@ -13,8 +14,10 @@ import android.widget.Toast;
 
 
 import com.alen.simpleweather.gson.CaiyunData;
-import com.alen.simpleweather.gson.Weather;
+import com.alen.simpleweather.gson.MyCity;
+import com.alen.simpleweather.gson.HefengData;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -25,9 +28,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -60,12 +67,12 @@ public class Utility {
     }
 
     //处理两个数据提供商的工具
-    public static Weather handleWeatherResponse(String response) {
+    public static HefengData handleHefengResponse(String response) {
         try{
             JSONObject jsonObject = new JSONObject(response);
             JSONArray jsonArray = jsonObject.getJSONArray("HeWeather6");
             String str = jsonArray.getJSONObject(0).toString();
-            return new Gson().fromJson(str, Weather.class);
+            return new Gson().fromJson(str, HefengData.class);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -73,7 +80,7 @@ public class Utility {
     }
     public static CaiyunData handleCaiyunWeatherResponse(String response) {
         try{
-            JSONObject jsonObject = new JSONObject(response).getJSONObject("result").getJSONObject("hourly");
+            JSONObject jsonObject = new JSONObject(response).getJSONObject("result");
             String str = jsonObject.toString();
             return new Gson().fromJson(str, CaiyunData.class);
         }catch (Exception e){
@@ -92,6 +99,13 @@ public class Utility {
             default:
         }
         return null;
+    }
+
+    //网络请求
+    public static void sendOkHttpRequest(String address, okhttp3.Callback callback) {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder().url(address).build();
+        client.newCall(request).enqueue(callback);
     }
 
     //设置字体
@@ -126,6 +140,36 @@ public class Utility {
         txt = txt == null ? "1500000000000":txt;
         long updateTime = Long.parseLong(txt);
         return (currentTime - updateTime)/1000;
+    }
+
+    //保存更新时间
+    public static void saveTime(Context context, String fileName, int type){
+        Utility.setPrefe(context, fileName, "upDataTime"+type, System.currentTimeMillis()+"");
+    }
+
+    //获取List
+    public static List<MyCity> getList(Context context){
+        String listTxt = Utility.getPrefe(context, "list", "list");
+        if (listTxt != null){
+            return new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
+        }else {
+            return new ArrayList<MyCity>();
+        }
+    }
+
+    //保存更新的list
+    public static void saveList(Context context, int position, String street, String province, String city, String lonlat){
+        saveList(context, position, street, province, city, lonlat, null, 0);
+    }
+    public static void saveList(Context context, int position, String street, String province, String city, String lonlat, String tmp, int code){
+        List list = getList(context);
+        if (list.size() != 0 && position>=0){
+            list.set(position, new MyCity(street, province, city, lonlat, tmp, code));
+        }else {
+            list.add(new MyCity(street, province, city, lonlat, tmp, code));
+        }
+        String json = new Gson().toJson(list);
+        Utility.setPrefe(context, "list", "list", json);
     }
 
     //获取数据库对象
@@ -176,4 +220,5 @@ public class Utility {
         editor.putString(key, value);
         editor.apply();
     }
+
 }

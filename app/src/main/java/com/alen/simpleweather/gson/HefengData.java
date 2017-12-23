@@ -8,11 +8,10 @@ import java.util.List;
  * Created by Alen on 2017/11/17.
  */
 
-public class Weather {
+public class HefengData {
     public String status;
     public Basic basic;
     public Now now;
-    public UpDate upDate;
 
     @SerializedName("daily_forecast")
     public List<Forecast> forecastList;

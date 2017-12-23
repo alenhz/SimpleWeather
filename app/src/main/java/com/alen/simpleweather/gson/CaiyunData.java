@@ -9,15 +9,12 @@ import java.util.List;
  */
 
 public class CaiyunData {
-    public String status;
-    public String description;
+    @SerializedName("hourly")
+    public Hourly hourly;
 
-    @SerializedName("aqi")
-    public List<HourlyAQI> hourlyAQIList;
+    @SerializedName("minutely")
+    public Minutely minutely;
 
-    @SerializedName("temperature")
-    public List<HourlyTemperature> hourlyTemperatureList;
-
-    @SerializedName("precipitation")
-    public List<HourlyPrecipitation> hourlyPrecipitationList;
+    @SerializedName("alert")
+    public Alert alert;
 }

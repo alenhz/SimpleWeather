@@ -13,7 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +26,12 @@ import com.alen.simpleweather.adapter.ForecastAdapter;
 import com.alen.simpleweather.adapter.HourlyAdapter;
 import com.alen.simpleweather.gson.CaiyunData;
 import com.alen.simpleweather.gson.Forecast;
-import com.alen.simpleweather.gson.HourlyAQI;
-import com.alen.simpleweather.gson.HourlyPrecipitation;
-import com.alen.simpleweather.gson.HourlyTemperature;
+import com.alen.simpleweather.gson.Hourly;
 import com.alen.simpleweather.gson.LifeStyle;
 import com.alen.simpleweather.gson.MyCity;
-import com.alen.simpleweather.gson.Weather;
-import com.alen.simpleweather.util.HttpUtil;
+import com.alen.simpleweather.gson.HefengData;
 import com.alen.simpleweather.util.LBS;
+import com.alen.simpleweather.util.RequestWeather;
 import com.alen.simpleweather.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -51,15 +48,13 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
-import okhttp3.Callback;
-import okhttp3.Response;
-
 /**
  * Created by Alen on 2017/12/15.
  */
 
 @SuppressLint("ValidFragment")
 public class WeatherFragment extends Fragment {
+    private RequestWeather requestWeather;
     private LBS lbs;
     private View view;
     private Window window;
@@ -128,12 +123,14 @@ public class WeatherFragment extends Fragment {
         }
     }
     private void init(){
-        if (position == 0){
+        if (position != 0){
+            fileName = lonlat;
+        }else {
             fileName = "lbs";
             lbs();
-        }else {
-            fileName = lonlat;
         }
+        requestWeather = new RequestWeather(activity, context);
+
         //初始化view
 
         title_text_city_name = (TextView) view.findViewById(R.id.title_text_city_name);
@@ -199,7 +196,7 @@ public class WeatherFragment extends Fragment {
             //有缓存时先解析天气,再联网更新
             for (int i = 0 ; i < 2 ; i ++){
                 if (weatherData[i] != null) {
-                    handleWeather(weatherData[i], i+1, 0);
+                    requestWeather.handleWeather(weatherData[i], position, i+1);
                 }
             }
             update();
@@ -230,30 +227,16 @@ public class WeatherFragment extends Fragment {
             public void callBack(String lbslonlat, String lbsSting, String city, String province) {
                 street = lbsSting;
                 lonlat = lbslonlat;
-                show();
+                requestWeather.request(position, fileName, lonlat, street);
                 refreshLayout.finishRefresh(true);
             }
         });
-    }
-    private void save(String province, String city, String tmp, int code){
-        if (list.size() != 0){
-            list.set(position, new MyCity(street, province, city, lonlat, tmp, code));
-        }else {
-            list.add(new MyCity(street, province, city, lonlat, tmp, code));
-        }
-        String json = new Gson().toJson(list);
-        Utility.setPrefe(context, "list", "list", json);
-    }
-    private void saveTime(int type, int in){
-        if (in == 1){
-            Utility.setPrefe(context, fileName, "upDataTime"+type, System.currentTimeMillis()+"");
-        }
     }
     private void update(){
         if (position==0){
             lbs.start();
         }else {
-            show();
+            requestWeather.request(position, fileName, lonlat);
         }
     }
     private void listener(){
@@ -297,89 +280,64 @@ public class WeatherFragment extends Fragment {
                 update();
             }
         });
-    }
-    public void show(){
-        for (int i = 1 ; i < 3 ; i++){
-            final int type = i;
-            if (Utility.getTime(context, fileName, "upDataTime"+type) > 300){
-                HttpUtil.sendOkHttpRequest(Utility.getURL(lonlat, i), new Callback() {
-                    @Override
-                    public void onFailure(okhttp3.Call call, IOException e) {
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                refreshLayout.finishRefresh(false);
-                                Utility.showToast(activity, "请检查网络连接并重试");
-                            }
-                        });
-                    }
 
+        requestWeather.setCallBack(new RequestWeather.RequestCallBack() {
+
+            @Override
+            public void callBackHefeng(final HefengData hefengData) {
+                activity.runOnUiThread(new Runnable() {
                     @Override
-                    public void onResponse(okhttp3.Call call, Response response) throws IOException {
-                        final String responseText = response.body().string();
-                        handleWeather(responseText, type, 1);
+                    public void run() {
+                        showTitleInfo(hefengData);
+                        showForcastInfo(hefengData);
+                        showLifeInfo(hefengData);
                     }
                 });
             }
-        }
-    }
-    public void handleWeather(final String responseText, final int type, final int in){
-        activity.runOnUiThread(new Runnable() {
+
             @Override
-            public void run() {
-                switch (type){
-                    case 1:
-                        final Weather weather = Utility.handleWeatherResponse(responseText);
-                        if (weather != null && "ok".equals(weather.status)){
-                            Utility.setPrefe(context, fileName, "hefeng", responseText);
-                            saveTime(type, in);
-                            save(weather.basic.admin_area, weather.basic.parent_city, weather.now.tmp, weather.now.cond_code);
-                            showTitleInfo(weather);
-                            showForcastInfo(weather);
-                            showLifeInfo(weather);
-                        }else {
-                            refreshLayout.finishRefresh(false);
-                            Utility.showToast(activity, "获取天气数据失败");
-                        }
-                        break;
-                    case 2:
-                        final CaiyunData caiyunData = Utility.handleCaiyunWeatherResponse(responseText);
-                        if (caiyunData != null && "ok".equals(caiyunData.status)){
-                            Utility.setPrefe(context, fileName, "caiyun", responseText);
-                            saveTime(type, in);
-                            showHourlyInfo(caiyunData);
-                            noInternet();
-                        }else {
-                            refreshLayout.finishRefresh(false);
-                            Utility.showToast(activity, "获取天气数据失败");
-                        }
-                        break;
-                    default:
-                }
+            public void callBackCaiyun(final CaiyunData caiyunData) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        showHourlyInfo(caiyunData);
+                        noInternet();
+                    }
+                });
+            }
+
+            @Override
+            public void callBackError() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshLayout.finishRefresh(false);
+                    }
+                });
             }
         });
     }
-    private void showTitleInfo(Weather weather){
+    private void showTitleInfo(HefengData hefengData){
         if (street != null){
             Utility.setPrefe(context, fileName, "street", street);
             title_text_city_name.setText(street);
-            now_title_info_text.setText(street+" "+weather.now.tmp+"℃");
+            now_title_info_text.setText(street+" "+ hefengData.now.tmp+"℃");
         }else {
-            now_title_info_text.setText(weather.basic.location+" "+weather.now.tmp+"℃");
-            title_text_city_name.setText(weather.basic.location);
+            now_title_info_text.setText(hefengData.basic.location+" "+ hefengData.now.tmp+"℃");
+            title_text_city_name.setText(hefengData.basic.location);
         }
-        title_text_temperature.setText(weather.now.tmp);
-        title_text_weather_info.setText(weather.now.cond_txt);
-        title_text_wind_text.setText(weather.now.wind_dir);
-        title_text_wind_power.setText(weather.now.wind_sc);
-        title_text_humidity.setText(weather.now.hum);
-        title_text_somatosensory_temperature.setText(weather.now.fl);
+        title_text_temperature.setText(hefengData.now.tmp);
+        title_text_weather_info.setText(hefengData.now.cond_txt);
+        title_text_wind_text.setText(hefengData.now.wind_dir);
+        title_text_wind_power.setText(hefengData.now.wind_sc);
+        title_text_humidity.setText(hefengData.now.hum);
+        title_text_somatosensory_temperature.setText(hefengData.now.fl);
         int nowTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         try {
-            if (weather.now.cond_code <= 103 && (nowTime<6 || nowTime>=18)) {
-                imageId_d = "icon/" + weather.now.cond_code + "_n.png";
+            if (hefengData.now.cond_code <= 103 && (nowTime<6 || nowTime>=18)) {
+                imageId_d = "icon/" + hefengData.now.cond_code + "_n.png";
             } else {
-                imageId_d = "icon/" + weather.now.cond_code + ".png";
+                imageId_d = "icon/" + hefengData.now.cond_code + ".png";
             }
             Bitmap bitmap = BitmapFactory.decodeStream(activity.getAssets().open(imageId_d));
             now_weather_code_image.setImageBitmap(bitmap);
@@ -387,11 +345,11 @@ public class WeatherFragment extends Fragment {
             e.printStackTrace();
         }
     }
-    private void showForcastInfo(Weather weather){
+    private void showForcastInfo(HefengData hefengData){
         today = true;
         forecastAllTemperature.clear();
         List<MyForecastData> datas = new ArrayList<>();
-        for (Forecast forecast : weather.forecastList) {
+        for (Forecast forecast : hefengData.forecastList) {
             code.clear();
             code.add(forecast.cond_code_d);
             code.add(forecast.cond_code_n);
@@ -430,8 +388,8 @@ public class WeatherFragment extends Fragment {
         forecastRecyclerView.setNestedScrollingEnabled(false);
         forecastRecyclerView.setAdapter(new ForecastAdapter(activity, datas, highestDegree, lowestDegree, mScreenWidth));
     }
-    private void showLifeInfo(Weather weather){
-        for (LifeStyle lifeStyle : weather.lifeStyleList){
+    private void showLifeInfo(HefengData hefengData){
+        for (LifeStyle lifeStyle : hefengData.lifeStyleList){
             switch (lifeStyle.type){
                 case "comf":
                     travel.setText(lifeStyle.brf);
@@ -458,18 +416,18 @@ public class WeatherFragment extends Fragment {
         }
     }
     private void showHourlyInfo(CaiyunData caiyunData){
-        description_text.setText(caiyunData.description);
+        description_text.setText(caiyunData.hourly.description);
         List<MyHourlyData> datas = new ArrayList<>();
-        HourlyAQI hourlyAQI;
-        HourlyPrecipitation hourlyPrecipitation;
-        HourlyTemperature hourlyTemperature;
+        Hourly.HourlyAQI hourlyAQI;
+        Hourly.HourlyPrecipitation hourlyPrecipitation;
+        Hourly.HourlyTemperature hourlyTemperature;
         forecastAllTemperature.clear();
-        hourlyAQI = caiyunData.hourlyAQIList.get(0);
+        hourlyAQI = caiyunData.hourly.aqi.get(0);
         title_text_weather_pm25.setText("空气质量 "+Integer.parseInt(hourlyAQI.value));
-        for(int i = 0; i < caiyunData.hourlyAQIList.size(); i++){
-            hourlyAQI = caiyunData.hourlyAQIList.get(i);
-            hourlyTemperature = caiyunData.hourlyTemperatureList.get(i);
-            hourlyPrecipitation = caiyunData.hourlyPrecipitationList.get(i);
+        for(int i = 0; i < caiyunData.hourly.aqi.size(); i++){
+            hourlyAQI = caiyunData.hourly.aqi.get(i);
+            hourlyTemperature = caiyunData.hourly.temperature.get(i);
+            hourlyPrecipitation = caiyunData.hourly.precipitation.get(i);
             int tmp = new BigDecimal(hourlyTemperature.value).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
             int aqi = Integer.parseInt(hourlyAQI.value);
             String aqiInfo;

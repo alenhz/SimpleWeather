@@ -9,15 +9,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.alen.simpleweather.adapter.MyCityListAdapter;
+import com.alen.simpleweather.gson.CaiyunData;
 import com.alen.simpleweather.gson.MyCity;
-import com.alen.simpleweather.gson.Weather;
-import com.alen.simpleweather.util.HttpUtil;
+import com.alen.simpleweather.gson.HefengData;
+import com.alen.simpleweather.util.RequestWeather;
 import com.alen.simpleweather.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -39,13 +39,18 @@ public class MyCityListActivity extends AppCompatActivity {
     private RecyclerView my_city_list_recycler;
     private MyCityListAdapter myCityListAdapter;
     private String fileName;
+    private RequestWeather requestWeather;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_city_list);
         init();
         listener();
-
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updata();
     }
     private void init(){
         context = MyCityListActivity.this;
@@ -63,6 +68,8 @@ public class MyCityListActivity extends AppCompatActivity {
 
         database = Utility.getDB(this);
         removeList = new ArrayList<>();
+
+        requestWeather = new RequestWeather(MyCityListActivity.this, context);
 
         //设置字体
         Utility.setTypeFace(this, new TextView[]{
@@ -136,21 +143,43 @@ public class MyCityListActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        requestWeather.setCallBack(new RequestWeather.RequestCallBack() {
+
+            @Override
+            public void callBackHefeng(HefengData hefengData) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        list = Utility.getList(context);
+                        refresh(false);
+                    }
+                });
+            }
+
+            @Override
+            public void callBackCaiyun(CaiyunData caiyunData) {
+
+            }
+
+            @Override
+            public void callBackError() {
+
+            }
+        });
     }
     private void updata(){
         String listTxt = Utility.getPrefe(context, "list", "list");
         if (listTxt != null){
             list = new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
+            refresh(false);
             for (int i = 0 ; i < list.size() ; i++){
                 if (i != 0){
                     fileName = list.get(i).lonlat;
                 }else {
                     fileName = "lbs";
                 }
-                face(i, Utility.getPrefe(context, fileName, "hefeng"), 1);
-                if (Utility.getTime(context, fileName, "upDataTime1") > 300){
-                    handleWeather(i);
-                }
+                requestWeather.request(i, fileName, list.get(i).lonlat, list.get(i).cn);
             }
         }
     }
@@ -183,53 +212,8 @@ public class MyCityListActivity extends AppCompatActivity {
         });
     }
 
-    private void handleWeather(final int i){
-        HttpUtil.sendOkHttpRequest(Utility.getURL(list.get(i).lonlat, 1), new Callback() {
-            @Override
-            public void onFailure(okhttp3.Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Utility.showToast(context, "请检查网络连接并重试");
-                    }
-                });
-            }
 
-            @Override
-            public void onResponse(okhttp3.Call call, Response response) throws IOException {
-                final String responseText = response.body().string();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        face(i, responseText, 0);
-                    }
-                });
-            }
-        });
-    }
-    private void face(int i, String responseText, int a){
-        Weather weather = Utility.handleWeatherResponse(responseText);
-        if (weather != null && "ok".equals(weather.status)){
-            MyCity city = new MyCity(list.get(i).cn, list.get(i).province, list.get(i).city, list.get(i).lonlat, weather.now.tmp, weather.now.cond_code);
-            list.set(i, city);
-            String json = new Gson().toJson(list);
-            Utility.setPrefe(context, "list", "list", json);
-            Utility.setPrefe(context, list.get(i).lonlat, "hefeng", responseText);
-            if (i != 0){
-                Utility.setPrefe(context, list.get(i).lonlat, "upDataTime1", System.currentTimeMillis()+"");
-            }else {
-                Utility.setPrefe(context, "lbs", "upDataTime1", System.currentTimeMillis()+"");
-            }
-            refresh(false);
-        }
-        else if (a != 1){
-            Utility.showToast(context, "获取天气数据失败");
-        }
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updata();
-    }
+
+
 }

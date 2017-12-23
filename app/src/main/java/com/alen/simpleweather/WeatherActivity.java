@@ -102,7 +102,6 @@ public class WeatherActivity extends FragmentActivity{
         if (requestCode == 1){
             if (resultCode == 1){
                 i = data.getIntExtra("pager", 0);
-                Log.d("1111111111111", "fragmentPager: "+i);
             }
         }
     }
