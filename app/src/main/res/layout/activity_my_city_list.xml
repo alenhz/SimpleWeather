@@ -67,7 +67,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/my_city_list_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:nestedScrollingEnabled="false"/>
         </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
     <android.support.design.widget.FloatingActionButton

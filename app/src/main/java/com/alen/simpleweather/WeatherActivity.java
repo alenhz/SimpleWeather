@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,6 +17,7 @@ import com.alen.simpleweather.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +25,7 @@ import java.util.List;
 public class WeatherActivity extends FragmentActivity{
 
     private LinearLayout menu_layout;
-    private Button add_city;
+    private Button add_city, setting_button;
     private ViewPager viewPager;
     private List<MyCity> list;
     private List<Fragment> fragments;
@@ -58,6 +58,7 @@ public class WeatherActivity extends FragmentActivity{
         menu_layout = (LinearLayout) findViewById(R.id.menu_layout);
         add_city = (Button) findViewById(R.id.add_city);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
+        setting_button = (Button) findViewById(R.id.setting_button);
     }
     private void listener(){
         add_city.setOnClickListener(new View.OnClickListener() {
@@ -65,6 +66,12 @@ public class WeatherActivity extends FragmentActivity{
             public void onClick(View view) {
                 Intent intent = new Intent(WeatherActivity.this, MyCityListActivity.class);
                 startActivityForResult(intent, 1);
+            }
+        });
+        setting_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }

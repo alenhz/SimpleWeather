@@ -31,6 +31,7 @@
         android:textColor="#fff"
         android:textSize="16sp" />
     <LinearLayout
+        android:id="@+id/title_air_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/title_text_city_name"
@@ -56,6 +57,14 @@
             android:textSize="12sp"
             android:paddingLeft="3dp" />
     </LinearLayout>
+    <TextView
+        android:id="@+id/two_hours_text"
+        android:layout_below="@id/title_air_layout"
+        android:layout_marginLeft="20dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:textSize="12sp"/>
 
     <LinearLayout
         android:id="@+id/linearlayout_1"

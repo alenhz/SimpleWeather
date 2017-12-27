@@ -1,20 +1,13 @@
 package com.alen.simpleweather.util;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
-import android.content.pm.PackageManager;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 
-import com.alen.simpleweather.WeatherActivity;
+
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**

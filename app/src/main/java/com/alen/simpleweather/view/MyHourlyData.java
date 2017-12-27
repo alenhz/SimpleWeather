@@ -1,4 +1,4 @@
-package com.alen.simpleweather;
+package com.alen.simpleweather.view;
 
 import com.alen.simpleweather.view.IBaseWeatherData;
 

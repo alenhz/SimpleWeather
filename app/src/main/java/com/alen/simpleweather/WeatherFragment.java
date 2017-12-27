@@ -24,15 +24,15 @@ import android.widget.TextView;
 
 import com.alen.simpleweather.adapter.ForecastAdapter;
 import com.alen.simpleweather.adapter.HourlyAdapter;
+import com.alen.simpleweather.adapter.LifeAdapter;
 import com.alen.simpleweather.gson.CaiyunData;
-import com.alen.simpleweather.gson.Forecast;
-import com.alen.simpleweather.gson.Hourly;
-import com.alen.simpleweather.gson.LifeStyle;
 import com.alen.simpleweather.gson.MyCity;
 import com.alen.simpleweather.gson.HefengData;
 import com.alen.simpleweather.util.LBS;
 import com.alen.simpleweather.util.RequestWeather;
 import com.alen.simpleweather.util.Utility;
+import com.alen.simpleweather.view.MyForecastData;
+import com.alen.simpleweather.view.MyHourlyData;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -52,7 +52,7 @@ import java.util.List;
  * Created by Alen on 2017/12/15.
  */
 
-@SuppressLint("ValidFragment")
+
 public class WeatherFragment extends Fragment {
     private RequestWeather requestWeather;
     private LBS lbs;
@@ -63,12 +63,10 @@ public class WeatherFragment extends Fragment {
 
     private TextView title_text_city_name, title_text_temperature, title_text_weather_info, title_text_weather_pm25,
             title_text_wind_power, title_text_humidity, title_text_somatosensory_temperature, title_text_wind_text,
-            title_text_CL01, title_text_CL02, title_text_CL03, now_title_info_text;
+            title_text_CL01, title_text_CL02, title_text_CL03, now_title_info_text, two_hours_text;
 
-    private TextView travel, travel_info, clothes, clothes_info,
-            sunscreen, sunscreen_info, sport, sport_info, car, car_info,
-            description_text, activity_weather_text_CL01;
-    private RecyclerView forecastRecyclerView, hourlyRecyclerView;
+    private TextView description_text, activity_weather_text_CL01;
+    private RecyclerView forecastRecyclerView, hourlyRecyclerView, lifeRecyclerView;
     private LinearLayout title_null_layout, info_layout, menu_layout;
     private RelativeLayout title_layout;
     DisplayMetrics dm;
@@ -84,6 +82,9 @@ public class WeatherFragment extends Fragment {
     private ImageView now_weather_code_image;
     private List<MyCity> list;
 
+    public WeatherFragment(){}
+
+    @SuppressLint("ValidFragment")
     public WeatherFragment(LinearLayout menu_layout, int position){
         this.menu_layout = menu_layout;
         this.position = position;
@@ -145,23 +146,16 @@ public class WeatherFragment extends Fragment {
         title_text_CL02 = (TextView) view.findViewById(R.id.title_text_CL02);
         title_text_CL03 = (TextView) view.findViewById(R.id.title_text_CL03);
         now_title_info_text = (TextView) view.findViewById(R.id.now_title_info_text);
+        two_hours_text = (TextView) view.findViewById(R.id.two_hours_text);
 
-        travel = (TextView) view.findViewById(R.id.travel);
-        travel_info = (TextView) view.findViewById(R.id.travel_info);
-        clothes = (TextView) view.findViewById(R.id.clothes);
-        clothes_info = (TextView) view.findViewById(R.id.clothes_info);
-        sunscreen = (TextView) view.findViewById(R.id.sunscreen);
-        sunscreen_info = (TextView) view.findViewById(R.id.sunscreen_info);
-        sport = (TextView) view.findViewById(R.id.sport);
-        sport_info = (TextView) view.findViewById(R.id.sport_info);
-        car = (TextView) view.findViewById(R.id.car);
-        car_info = (TextView) view.findViewById(R.id.car_info);
         description_text = (TextView) view.findViewById(R.id.description_text);
         activity_weather_text_CL01 = (TextView) view.findViewById(R.id.activity_weather_text_CL01);
 
         forecastAllTemperature = new ArrayList();
         forecastRecyclerView = (RecyclerView) view.findViewById(R.id.forecast_recyclerview);
         hourlyRecyclerView = (RecyclerView) view.findViewById(R.id.hourly_recyclerview);
+        lifeRecyclerView = (RecyclerView) view.findViewById(R.id.life_recycler);
+
         title_layout = (RelativeLayout) view.findViewById(R.id.title_layout);
         title_null_layout = (LinearLayout) view.findViewById(R.id.title_null_layout);
         info_layout = (LinearLayout) view.findViewById(R.id.info_layout);
@@ -181,9 +175,8 @@ public class WeatherFragment extends Fragment {
         Utility.setTypeFace(context, new TextView[]{
                 title_text_city_name, title_text_temperature, title_text_weather_info, title_text_weather_pm25,
                 title_text_wind_power, title_text_humidity, title_text_somatosensory_temperature, title_text_wind_text,
-                title_text_CL01, title_text_CL02, title_text_CL03, travel, travel_info, clothes, clothes_info,
-                sunscreen, sunscreen_info, sport, sport_info, car, car_info, description_text, activity_weather_text_CL01,
-                now_title_info_text
+                title_text_CL01, title_text_CL02, title_text_CL03, description_text, activity_weather_text_CL01,
+                now_title_info_text, two_hours_text
         });
     }
     private void cache(){
@@ -255,7 +248,7 @@ public class WeatherFragment extends Fragment {
 
         scrollView.setOnScrollChangeListener(new NestedScrollView.OnScrollChangeListener() {
         private int lastScrollY = 0;
-        private int h = DensityUtil.dp2px(320);
+        private int h = DensityUtil.dp2px(360);
         @Override
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
             int systemUiVisibility = window.getDecorView().getSystemUiVisibility();
@@ -349,7 +342,7 @@ public class WeatherFragment extends Fragment {
         today = true;
         forecastAllTemperature.clear();
         List<MyForecastData> datas = new ArrayList<>();
-        for (Forecast forecast : hefengData.forecastList) {
+        for (HefengData.Forecast forecast : hefengData.forecastList) {
             code.clear();
             code.add(forecast.cond_code_d);
             code.add(forecast.cond_code_n);
@@ -385,45 +378,26 @@ public class WeatherFragment extends Fragment {
         LinearLayoutManager forecastManager = new LinearLayoutManager(activity);
         forecastManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         forecastRecyclerView.setLayoutManager(forecastManager);
-        forecastRecyclerView.setNestedScrollingEnabled(false);
         forecastRecyclerView.setAdapter(new ForecastAdapter(activity, datas, highestDegree, lowestDegree, mScreenWidth));
     }
     private void showLifeInfo(HefengData hefengData){
-        for (LifeStyle lifeStyle : hefengData.lifeStyleList){
-            switch (lifeStyle.type){
-                case "comf":
-                    travel.setText(lifeStyle.brf);
-                    travel_info.setText(lifeStyle.txt);
-                    break;
-                case "drsg":
-                    clothes.setText(lifeStyle.brf);
-                    clothes_info.setText(lifeStyle.txt);
-                    break;
-                case "uv":
-                    sunscreen.setText(lifeStyle.brf);
-                    sunscreen_info.setText(lifeStyle.txt);
-                    break;
-                case "sport":
-                    sport.setText(lifeStyle.brf);
-                    sport_info.setText(lifeStyle.txt);
-                    break;
-                case "cw":
-                    car.setText(lifeStyle.brf);
-                    car_info.setText(lifeStyle.txt);
-                    break;
-                default:
-            }
+        List<HefengData.LifeStyle> list = new ArrayList();
+        for (HefengData.LifeStyle lifeStyle : hefengData.lifeStyleList){
+            list.add(lifeStyle);
         }
+        lifeRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        lifeRecyclerView.setAdapter(new LifeAdapter(context, list));
     }
     private void showHourlyInfo(CaiyunData caiyunData){
         description_text.setText(caiyunData.hourly.description);
         List<MyHourlyData> datas = new ArrayList<>();
-        Hourly.HourlyAQI hourlyAQI;
-        Hourly.HourlyPrecipitation hourlyPrecipitation;
-        Hourly.HourlyTemperature hourlyTemperature;
+        CaiyunData.Hourly.HourlyAQI hourlyAQI;
+        CaiyunData.Hourly.HourlyPrecipitation hourlyPrecipitation;
+        CaiyunData.Hourly.HourlyTemperature hourlyTemperature;
         forecastAllTemperature.clear();
         hourlyAQI = caiyunData.hourly.aqi.get(0);
         title_text_weather_pm25.setText("空气质量 "+Integer.parseInt(hourlyAQI.value));
+        two_hours_text.setText(caiyunData.minutely.description);
         for(int i = 0; i < caiyunData.hourly.aqi.size(); i++){
             hourlyAQI = caiyunData.hourly.aqi.get(i);
             hourlyTemperature = caiyunData.hourly.temperature.get(i);
@@ -471,7 +445,6 @@ public class WeatherFragment extends Fragment {
         LinearLayoutManager hourlyManager = new LinearLayoutManager(activity);
         hourlyManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         hourlyRecyclerView.setLayoutManager(hourlyManager);
-        hourlyRecyclerView.setNestedScrollingEnabled(false);
         hourlyRecyclerView.setAdapter(new HourlyAdapter(activity, datas, highestDegree, lowestDegree, mScreenWidth));
     }
 }

@@ -141,7 +141,7 @@ public class MyCityListAdapter extends RecyclerView.Adapter<MyCityListAdapter.Vi
      * 按钮点击事件对应的接口
      */
     public interface ButtonInterface{
-        public void onclick( View view,int position);
+        public void onclick(View view, int position);
     }
 
 

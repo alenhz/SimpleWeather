@@ -355,23 +355,29 @@ public class WeatherView<T extends IBaseWeatherData> extends View {
         drawMiddleLine(canvas);
 
         //------------------------在绘制控件之前的必要数据 base data, 整个控件的绘制都是基于这几个数据---------------------------
-
-        //baseY：代表的是 文字距离顶部/底部的距离 + 文字距离dot的距离 + 文字本身的高度
-        baseY = txtToBorder + txtToDot + (int) (fontMetrics.bottom - fontMetrics.ascent);
-
-        //最重要的一个数据 baseHeight: 可以看到 h - 2*baseY 其实就是在计算真实可用的温度线的高度区间
-        int baseHeight = h - 2 * baseY;
-
-        //在计算出温度线所在的区间后，计算每一度的高度
-        degreeHeight = baseHeight / (highestDegree - lowestDegree);
-
-        //------------------------------------------------------------------------------------------
         //计算圆点坐标
         T t = datas.get(position);
         int[] y = new int[2];
 
         Point[] points = new Point[2];//圆点坐标数组
         Point[] baseLinePoints = new Point[2];//文字坐标数组
+
+        //baseY：代表的是 文字距离顶部/底部的距离 + 文字距离dot的距离 + 文字本身的高度
+        baseY = txtToBorder + txtToDot + (int) (fontMetrics.bottom - fontMetrics.ascent);
+
+        //最重要的一个数据 baseHeight: 可以看到 h - 2*baseY 其实就是在计算真实可用的温度线的高度区间
+        int baseHeight;
+        if (t.getDegree().length == 1){
+            baseHeight = h - baseY - txtToBorder;
+        }else{
+            baseHeight = h - 2 * baseY;
+        }
+
+        //在计算出温度线所在的区间后，计算每一度的高度
+        degreeHeight = baseHeight / (highestDegree - lowestDegree);
+
+        //------------------------------------------------------------------------------------------
+
 
 
         for (int i = 0; i <= t.getDegree().length - 1; i++){

@@ -1,4 +1,4 @@
-package com.alen.simpleweather;
+package com.alen.simpleweather.view;
 
 import android.graphics.Bitmap;
 

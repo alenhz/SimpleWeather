@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.alen.simpleweather.MyForecastData;
+import com.alen.simpleweather.view.MyForecastData;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.util.Utility;
 import com.alen.simpleweather.view.WeatherView;

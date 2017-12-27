@@ -32,7 +32,7 @@ public class RequestWeather {
     public void request(final int position, final String fileName, final String lonlat, final String street){
         for (int i = 1 ; i < 3 ; i++){
             final int type = i;
-            if (Utility.getTime(context, fileName, "upDataTime"+type) > 1800){
+            if (Utility.getTime(context, fileName, "upDataTime"+type) > 600){
                 Utility.sendOkHttpRequest(Utility.getURL(lonlat, i), new Callback() {
                     @Override
                     public void onFailure(okhttp3.Call call, IOException e) {
@@ -62,7 +62,7 @@ public class RequestWeather {
                                     callBack.callBackHefeng(hefengData);
                                 }else {
                                     callBack.callBackError();
-                                    Utility.showToast(activity, "获取天气数据失败");
+                                    Utility.showToast(context, "获取天气数据失败");
                                 }
                                 break;
                             case 2:
@@ -73,7 +73,7 @@ public class RequestWeather {
                                     callBack.callBackCaiyun(caiyunData);
                                 }else {
                                     callBack.callBackError();
-                                    Utility.showToast(activity, "获取天气数据失败");
+                                    Utility.showToast(context, "获取天气数据失败");
                                 }
                                 break;
                             default:
@@ -95,7 +95,7 @@ public class RequestWeather {
                             callBack.callBackHefeng(hefengData);
                         }else {
                             callBack.callBackError();
-                            Utility.showToast(activity, "获取天气数据失败");
+                            Utility.showToast(context, "获取天气数据失败");
                         }
                         break;
                     case 2:
@@ -104,7 +104,7 @@ public class RequestWeather {
                             callBack.callBackCaiyun(caiyunData);
                         }else {
                             callBack.callBackError();
-                            Utility.showToast(activity, "获取天气数据失败");
+                            Utility.showToast(context, "获取天气数据失败");
                         }
                         break;
                     default:

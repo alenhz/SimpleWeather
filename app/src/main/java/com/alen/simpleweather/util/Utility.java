@@ -8,7 +8,9 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,8 @@ public class Utility {
             int option = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
             decorView.setSystemUiVisibility(option);
             window.setStatusBarColor(Color.TRANSPARENT);
+        }else if (Build.VERSION.SDK_INT >= 19) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         }
     }
     //toast工具
@@ -90,12 +94,12 @@ public class Utility {
     }
 
     //获取api链接
-    public static String getURL(String lbsString, int i){
+    public static String getURL(String lonlat, int i){
         switch (i){
             case 1:
-                return "https://free-api.heweather.com/s6/weather?key=" + HEFENG_KEY + "&location=" + lbsString;
+                return "https://free-api.heweather.com/s6/weather?key=" + HEFENG_KEY + "&location=" + lonlat;
             case 2:
-                return "https://api.caiyunapp.com/v2/" + CAIYUN_KEY + lbsString + "/forecast.json";
+                return "https://api.caiyunapp.com/v2/" + CAIYUN_KEY + lonlat + "/forecast.json";
             default:
         }
         return null;

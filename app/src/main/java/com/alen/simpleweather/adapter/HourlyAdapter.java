@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.alen.simpleweather.MyHourlyData;
+import com.alen.simpleweather.view.MyHourlyData;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.util.Utility;
 import com.alen.simpleweather.view.WeatherView;
@@ -49,10 +49,8 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.ViewHolder
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(
-                context).inflate(R.layout.hourly, parent,
-                false);
-        return new HourlyAdapter.ViewHolder(view);
+        View view = LayoutInflater.from(context).inflate(R.layout.hourly, parent, false);
+        return new ViewHolder(view);
     }
 
     @Override
