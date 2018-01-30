@@ -33,6 +33,7 @@ import com.alen.simpleweather.util.RequestWeather;
 import com.alen.simpleweather.util.Utility;
 import com.alen.simpleweather.view.MyForecastData;
 import com.alen.simpleweather.view.MyHourlyData;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.scwang.smartrefresh.layout.api.RefreshHeader;
@@ -67,8 +68,8 @@ public class WeatherFragment extends Fragment {
 
     private TextView description_text, activity_weather_text_CL01;
     private RecyclerView forecastRecyclerView, hourlyRecyclerView, lifeRecyclerView;
-    private LinearLayout title_null_layout, info_layout, menu_layout;
-    private RelativeLayout title_layout;
+    private LinearLayout title_null_layout, info_layout;
+    private RelativeLayout title_layout, menu_layout;
     DisplayMetrics dm;
     private boolean today;
     private List forecastAllTemperature, code;
@@ -84,16 +85,21 @@ public class WeatherFragment extends Fragment {
 
     public WeatherFragment(){}
 
-    @SuppressLint("ValidFragment")
-    public WeatherFragment(LinearLayout menu_layout, int position){
-        this.menu_layout = menu_layout;
-        this.position = position;
+    public static WeatherFragment newInstance(int position){
+        WeatherFragment weatherFragment = new WeatherFragment();
+        Bundle args = new Bundle();
+        args.putInt("position", position);
+        weatherFragment.setArguments(args);
+        return weatherFragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_weather, container, false);
+        if (getArguments() != null){
+            position = getArguments().getInt("position");
+        }
+        menu_layout = (RelativeLayout) getActivity().findViewById(R.id.menu_layout);
         context = getActivity();
         activity = getActivity();
         window = getActivity().getWindow();
@@ -112,7 +118,7 @@ public class WeatherFragment extends Fragment {
 
     }
     private void getList(){
-        String listTxt = Utility.getPrefe(context, "list", "list");
+        String listTxt = Utility.getPrefe("list", "list");
         if (listTxt != null){
             list = new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
             if (position != 0){
@@ -172,7 +178,7 @@ public class WeatherFragment extends Fragment {
         dm = new DisplayMetrics();
 
         //设置字体
-        Utility.setTypeFace(context, new TextView[]{
+        Utility.setTypeFace(new TextView[]{
                 title_text_city_name, title_text_temperature, title_text_weather_info, title_text_weather_pm25,
                 title_text_wind_power, title_text_humidity, title_text_somatosensory_temperature, title_text_wind_text,
                 title_text_CL01, title_text_CL02, title_text_CL03, description_text, activity_weather_text_CL01,
@@ -180,8 +186,8 @@ public class WeatherFragment extends Fragment {
         });
     }
     private void cache(){
-        String[] weatherData = {Utility.getPrefe(context, fileName, "hefeng"),
-                Utility.getPrefe(context, fileName, "caiyun"), Utility.getPrefe(context, fileName, "street")};
+        String[] weatherData = {Utility.getPrefe(fileName, "hefeng"),
+                Utility.getPrefe(fileName, "caiyun"), Utility.getPrefe(fileName, "street")};
         if (weatherData[2] != null) {
             street = weatherData[2];
         }
@@ -200,7 +206,7 @@ public class WeatherFragment extends Fragment {
         }
     }
     private void noInternet(){
-        if (Utility.getPrefe(context, fileName, "caiyun") == null){
+        if (Utility.getPrefe(fileName, "caiyun") == null){
             title_layout.setVisibility(View.GONE);
             info_layout.setVisibility(View.GONE);
             menu_layout.setVisibility(View.GONE);
@@ -312,7 +318,7 @@ public class WeatherFragment extends Fragment {
     }
     private void showTitleInfo(HefengData hefengData){
         if (street != null){
-            Utility.setPrefe(context, fileName, "street", street);
+            Utility.setPrefe(fileName, "street", street);
             title_text_city_name.setText(street);
             now_title_info_text.setText(street+" "+ hefengData.now.tmp+"℃");
         }else {
@@ -326,17 +332,13 @@ public class WeatherFragment extends Fragment {
         title_text_humidity.setText(hefengData.now.hum);
         title_text_somatosensory_temperature.setText(hefengData.now.fl);
         int nowTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        try {
-            if (hefengData.now.cond_code <= 103 && (nowTime<6 || nowTime>=18)) {
-                imageId_d = "icon/" + hefengData.now.cond_code + "_n.png";
-            } else {
-                imageId_d = "icon/" + hefengData.now.cond_code + ".png";
-            }
-            Bitmap bitmap = BitmapFactory.decodeStream(activity.getAssets().open(imageId_d));
-            now_weather_code_image.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (hefengData.now.cond_code <= 103 && (nowTime<6 || nowTime>=18)) {
+            imageId_d = "weather_icon_" + hefengData.now.cond_code + "_n";
+        } else {
+            imageId_d = "weather_icon_" + hefengData.now.cond_code;
         }
+        int resId_n = getResources().getIdentifier(imageId_d, "drawable", getContext().getPackageName());
+        Glide.with(context).load(resId_n).into(now_weather_code_image);
     }
     private void showForcastInfo(HefengData hefengData){
         today = true;
@@ -347,11 +349,11 @@ public class WeatherFragment extends Fragment {
             code.add(forecast.cond_code_d);
             code.add(forecast.cond_code_n);
             if (forecast.cond_code_n <= 103) {
-                imageId_n = "icon/" + forecast.cond_code_n + "_n.png";
+                imageId_n = "weather_icon_" + forecast.cond_code_n + "_n";
             } else {
-                imageId_n = "icon/" + forecast.cond_code_n + ".png";
+                imageId_n = "weather_icon_" + forecast.cond_code_n;
             }
-            imageId_d = "icon/" + forecast.cond_code_d + ".png";
+            imageId_d = "weather_icon_" + forecast.cond_code_d;
 
             forecastAllTemperature.add(forecast.tmp_max);
             forecastAllTemperature.add(forecast.tmp_min);
@@ -361,16 +363,12 @@ public class WeatherFragment extends Fragment {
                 week = "今天";
                 today = false;
             }
-            try {
-                Bitmap bitmapD = BitmapFactory.decodeStream(activity.getAssets().open(imageId_d));
-                Bitmap bitmapN = BitmapFactory.decodeStream(activity.getAssets().open(imageId_n));
-                int[] tmp = {forecast.tmp_max, forecast.tmp_min};
-                datas.add(new MyForecastData(tmp, forecast.date,
-                        forecast.cond_txt_d, forecast.cond_txt_n, bitmapD,
-                        bitmapN, forecast.wind_dir, forecast.wind_sc, week));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            int resId_n = getResources().getIdentifier(imageId_n, "drawable", getContext().getPackageName());
+            int resId_d = getResources().getIdentifier(imageId_d, "drawable", getContext().getPackageName());
+            int[] tmp = {forecast.tmp_max, forecast.tmp_min};
+            datas.add(new MyForecastData(tmp, forecast.date,
+                    forecast.cond_txt_d, forecast.cond_txt_n, resId_d,
+                    resId_n, forecast.wind_dir, forecast.wind_sc, week));
         }
         highestDegree = (int) Collections.max(forecastAllTemperature);
         lowestDegree = (int) Collections.min(forecastAllTemperature);

@@ -39,7 +39,7 @@ public class SearchCityAdapter extends RecyclerView.Adapter<SearchCityAdapter.Vi
             this.view = itemView;
             search_city_name_text = (TextView) itemView.findViewById(R.id.search_city_name_text);
             search_city_boole = (TextView) itemView.findViewById(R.id.search_city_boole);
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     search_city_name_text, search_city_boole
             });
             this.mListener = myItemClickListener;

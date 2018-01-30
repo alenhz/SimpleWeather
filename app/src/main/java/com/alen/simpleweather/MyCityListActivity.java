@@ -22,12 +22,8 @@ import com.alen.simpleweather.util.Utility;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import okhttp3.Callback;
-import okhttp3.Response;
 
 public class MyCityListActivity extends AppCompatActivity {
     private Context context;
@@ -66,13 +62,13 @@ public class MyCityListActivity extends AppCompatActivity {
 
         my_city_list_recycler.setLayoutManager(new LinearLayoutManager(this));
 
-        database = Utility.getDB(this);
+        database = Utility.getDB();
         removeList = new ArrayList<>();
 
         requestWeather = new RequestWeather(MyCityListActivity.this, context);
 
         //设置字体
-        Utility.setTypeFace(this, new TextView[]{
+        Utility.setTypeFace(new TextView[]{
                 my_city_list_title_text, my_city_list_edit_cancel_button, my_city_list_edit_ok_button
         });
 
@@ -133,7 +129,7 @@ public class MyCityListActivity extends AppCompatActivity {
                 }
                 refresh(false);
                 String json = new Gson().toJson(list);
-                Utility.setPrefe(context, "list", "list", json);
+                Utility.setPrefe("list", "list", json);
             }
         });
         my_city_list_add_button.setOnClickListener(new View.OnClickListener() {
@@ -151,7 +147,7 @@ public class MyCityListActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        list = Utility.getList(context);
+                        list = Utility.getList();
                         refresh(false);
                     }
                 });
@@ -169,7 +165,7 @@ public class MyCityListActivity extends AppCompatActivity {
         });
     }
     private void updata(){
-        String listTxt = Utility.getPrefe(context, "list", "list");
+        String listTxt = Utility.getPrefe("list", "list");
         if (listTxt != null){
             list = new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
             refresh(false);
@@ -204,7 +200,6 @@ public class MyCityListActivity extends AppCompatActivity {
         myCityListAdapter.buttonSetOnclick(new MyCityListAdapter.ButtonInterface() {
             @Override
             public void onclick(View view, int position) {
-                Utility.showToast(context, position+"");
                 removeList.add(list.get(position));
                list.remove(position);
                refresh(true);

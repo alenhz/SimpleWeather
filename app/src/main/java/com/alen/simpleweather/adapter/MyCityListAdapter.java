@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.gson.MyCity;
 import com.alen.simpleweather.util.Utility;
+import com.bumptech.glide.Glide;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -56,7 +57,7 @@ public class MyCityListAdapter extends RecyclerView.Adapter<MyCityListAdapter.Vi
             this.mListener = myItemClickListener;
             itemView.setOnClickListener(this);
 
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     my_city_list_item_city, my_city_list_item_superiors, my_city_list_item_tmp, my_city_list_item_CL01
             });
         }
@@ -96,17 +97,13 @@ public class MyCityListAdapter extends RecyclerView.Adapter<MyCityListAdapter.Vi
         holder.my_city_list_item_tmp.setText(myCity.tmp);
         int nowTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         String imageId;
-        try {
-            if (myCity.tmp_code <= 103 && (nowTime<6 || nowTime>=18)) {
-                imageId = "icon/" + myCity.tmp_code + "_n.png";
-            } else {
-                imageId = "icon/" + myCity.tmp_code + ".png";
-            }
-            Bitmap bitmap = BitmapFactory.decodeStream(context.getAssets().open(imageId));
-            holder.my_city_list_item_code_image.setImageBitmap(bitmap);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (myCity.tmp_code <= 103 && (nowTime<6 || nowTime>=18)) {
+            imageId = "weather_icon_" + myCity.tmp_code + "_n";
+        } else {
+            imageId = "weather_icon_" + myCity.tmp_code;
         }
+        int resId_n = context.getResources().getIdentifier(imageId, "drawable", context.getPackageName());
+        Glide.with(context).load(resId_n).into(holder.my_city_list_item_code_image);
 
         if (type && position != 0){
             holder.my_city_list_item_delete_button.setVisibility(View.VISIBLE);

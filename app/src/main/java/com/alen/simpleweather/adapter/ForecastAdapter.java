@@ -12,6 +12,7 @@ import com.alen.simpleweather.view.MyForecastData;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.util.Utility;
 import com.alen.simpleweather.view.WeatherView;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,7 +54,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
             cond_txt_n = (TextView) itemview.findViewById(R.id.forecast_weather_n);
             wind_dir = (TextView) itemview.findViewById(R.id.forecast_wind_dir);
             wind_sc = (TextView) itemview.findViewById(R.id.forecast_wind_sc);
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     week, date, cond_txt_d, cond_txt_n, wind_dir, wind_sc
             });
         }
@@ -77,8 +78,8 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.ViewHo
         holder.cond_txt_n.setText(myForecastData.cond_txt_n);
         holder.wind_dir.setText(myForecastData.wind_dir);
         holder.wind_sc.setText(myForecastData.wind_sc);
-        holder.cond_code_d.setImageBitmap(myForecastData.cond_code_d);
-        holder.cond_code_n.setImageBitmap(myForecastData.cond_code_n);
+        Glide.with(context).load(myForecastData.cond_code_d).into(holder.cond_code_d);
+        Glide.with(context).load(myForecastData.cond_code_n).into(holder.cond_code_n);
     }
 
     @Override

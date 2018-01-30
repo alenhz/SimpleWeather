@@ -11,6 +11,7 @@ import com.alen.simpleweather.view.MyHourlyData;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.util.Utility;
 import com.alen.simpleweather.view.WeatherView;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ public class HourlyAdapter extends RecyclerView.Adapter<HourlyAdapter.ViewHolder
             hourly_aqi = (TextView) itemView.findViewById(R.id.hourly_aqi);
             hourly_precipitation = (TextView) itemView.findViewById(R.id.hourly_precipitation);
             hourly_time = (TextView) itemView.findViewById(R.id.hourly_time);
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     hourly_precipitation, hourly_aqi, hourly_time
             });
         }

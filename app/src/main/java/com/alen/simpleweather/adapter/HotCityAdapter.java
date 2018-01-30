@@ -36,7 +36,7 @@ public class HotCityAdapter extends RecyclerView.Adapter<HotCityAdapter.ViewHold
             this.view = itemView;
             hot_city_text = (TextView) itemView.findViewById(R.id.hot_city_text);
             hot_city_location_image = (ImageView) itemView.findViewById(R.id.hot_city_location_image);
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     hot_city_text
             });
             this.mListener = myItemClickListener;

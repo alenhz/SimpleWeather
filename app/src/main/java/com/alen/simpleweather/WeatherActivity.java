@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 
 import com.alen.simpleweather.gson.MyCity;
 import com.alen.simpleweather.util.Utility;
+import com.alen.simpleweather.view.ViewPagerIndicator;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,7 +25,7 @@ import java.util.List;
 
 public class WeatherActivity extends FragmentActivity{
 
-    private LinearLayout menu_layout;
+    private LinearLayout indicator_layout;
     private Button add_city, setting_button;
     private ViewPager viewPager;
     private List<MyCity> list;
@@ -45,7 +46,7 @@ public class WeatherActivity extends FragmentActivity{
     @Override
     protected void onResume() {
         super.onResume();
-        String listTxt = Utility.getPrefe(WeatherActivity.this, "list", "list");
+        String listTxt = Utility.getPrefe("list", "list");
         if (listTxt != null){
             list = new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
         }
@@ -55,7 +56,7 @@ public class WeatherActivity extends FragmentActivity{
     private void init(){
         Utility.statusBar(getWindow());
 
-        menu_layout = (LinearLayout) findViewById(R.id.menu_layout);
+        indicator_layout = (LinearLayout) findViewById(R.id.indicator_layout);
         add_city = (Button) findViewById(R.id.add_city);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setting_button = (Button) findViewById(R.id.setting_button);
@@ -71,11 +72,13 @@ public class WeatherActivity extends FragmentActivity{
         setting_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                Intent intent = new Intent(WeatherActivity.this, SettingActivity.class);
+                startActivity(intent);
             }
         });
     }
     private void fragmentPager(){
+        indicator_layout.removeAllViews();
         if (list == null){
             position = 1;
         }else {
@@ -83,8 +86,7 @@ public class WeatherActivity extends FragmentActivity{
         }
         fragments = new ArrayList<Fragment>();
         for (int i = 0 ; i<position ; i++){
-            WeatherFragment weatherFragment;
-            weatherFragment = new WeatherFragment(menu_layout, i);
+            WeatherFragment weatherFragment = WeatherFragment.newInstance(i);
             fragments.add(weatherFragment);
         }
         FragmentPagerAdapter adapter = new FragmentPagerAdapter(getSupportFragmentManager()) {
@@ -101,6 +103,7 @@ public class WeatherActivity extends FragmentActivity{
         viewPager.setAdapter(adapter);
         viewPager.setOffscreenPageLimit(position);
         viewPager.setCurrentItem(i);
+        viewPager.addOnPageChangeListener(new ViewPagerIndicator(this, viewPager, indicator_layout, position));
         i = 0;
     }
 

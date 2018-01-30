@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.alen.simpleweather.R;
 import com.alen.simpleweather.gson.HefengData;
 import com.alen.simpleweather.util.Utility;
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public class LifeAdapter extends RecyclerView.Adapter<LifeAdapter.ViewHoder> {
             life_info = (TextView) itemView.findViewById(R.id.life_info);
             life_image = (ImageView) itemView.findViewById(R.id.life_image);
 
-            Utility.setTypeFace(view.getContext(), new TextView[]{
+            Utility.setTypeFace(new TextView[]{
                     life_name, life_info
             });
         }
@@ -58,7 +59,7 @@ public class LifeAdapter extends RecyclerView.Adapter<LifeAdapter.ViewHoder> {
     @Override
     public void onBindViewHolder(ViewHoder holder, int position) {
         holder.life_name.setText(life_names[position]+": "+lifeStyles.get(position).brf);
-        holder.life_image.setImageResource(life_images[position]);
+        Glide.with(context).load(life_images[position]).into(holder.life_image);
         holder.life_info.setText(lifeStyles.get(position).txt);
     }
 

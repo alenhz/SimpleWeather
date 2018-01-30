@@ -84,7 +84,7 @@ public class SearchCityActivity extends AppCompatActivity {
 
         add_city_search_list.setLayoutManager(new LinearLayoutManager(this));
 
-        database = Utility.getDB(context);
+        database = Utility.getDB();
 
         hot_city_layout = (LinearLayout) findViewById(R.id.hot_city_layout);
 
@@ -106,7 +106,7 @@ public class SearchCityActivity extends AppCompatActivity {
         textView.setHintTextColor(Color.parseColor("#c3c3c3"));
         textView.setGravity(Gravity.CENTER_VERTICAL);
 //设置字体
-        Utility.setTypeFace(this, new TextView[]{
+        Utility.setTypeFace(new TextView[]{
                 add_city_CL01, add_city_CL02, textView
         });
     }
@@ -214,7 +214,7 @@ public class SearchCityActivity extends AppCompatActivity {
             public void onItemClick(View view, int position) {
                 CityList cityList = datas.get(position);
                 if (cityList.judge.equals("n")){
-                    Utility.saveList(context, -1, cityList.cn, cityList.province, cityList.city, cityList.lonlat);
+                    Utility.saveList(-1, cityList.cn, cityList.province, cityList.city, cityList.lonlat);
                     ContentValues cv = new ContentValues();
                     cv.put("judge","y");
                     database.update("list", cv, "lonlat = ?", new String[]{cityList.lonlat});

@@ -32,7 +32,7 @@ public class RequestWeather {
     public void request(final int position, final String fileName, final String lonlat, final String street){
         for (int i = 1 ; i < 3 ; i++){
             final int type = i;
-            if (Utility.getTime(context, fileName, "upDataTime"+type) > 600){
+            if (Utility.getTime(fileName, "upDataTime"+type) > 600){
                 Utility.sendOkHttpRequest(Utility.getURL(lonlat, i), new Callback() {
                     @Override
                     public void onFailure(okhttp3.Call call, IOException e) {
@@ -40,7 +40,7 @@ public class RequestWeather {
                             @Override
                             public void run() {
                                 callBack.callBackError();
-                                Utility.showToast(context, "请检查网络连接并重试");
+                                Utility.toastUtil("请检查网络连接并重试");
                             }
                         });
                     }
@@ -52,28 +52,28 @@ public class RequestWeather {
                             case 1:
                                 hefengData = Utility.handleHefengResponse(responseText);
                                 if (hefengData != null && "ok".equals(hefengData.status)){
-                                    Utility.setPrefe(context, fileName, "hefeng", responseText);
+                                    Utility.setPrefe(fileName, "hefeng", responseText);
                                     if (fileName == "lbs"){
-                                        Utility.saveList(context, position, street, hefengData.basic.admin_area, hefengData.basic.parent_city, lonlat, hefengData.now.tmp, hefengData.now.cond_code);
+                                        Utility.saveList(position, street, hefengData.basic.admin_area, hefengData.basic.parent_city, lonlat, hefengData.now.tmp, hefengData.now.cond_code);
                                     }else {
-                                        Utility.saveList(context, position, hefengData.basic.location, hefengData.basic.admin_area, hefengData.basic.parent_city, lonlat, hefengData.now.tmp, hefengData.now.cond_code);
+                                        Utility.saveList(position, hefengData.basic.location, hefengData.basic.admin_area, hefengData.basic.parent_city, lonlat, hefengData.now.tmp, hefengData.now.cond_code);
                                     }
-                                    Utility.saveTime(context, fileName, type);
+                                    Utility.saveTime(fileName, type);
                                     callBack.callBackHefeng(hefengData);
                                 }else {
                                     callBack.callBackError();
-                                    Utility.showToast(context, "获取天气数据失败");
+                                    Utility.toastUtil("获取天气数据失败");
                                 }
                                 break;
                             case 2:
                                 caiyunData = Utility.handleCaiyunWeatherResponse(responseText);
                                 if (caiyunData != null && "ok".equals(caiyunData.hourly.status)){
-                                    Utility.setPrefe(context, fileName, "caiyun", responseText);
-                                    Utility.saveTime(context, fileName, type);
+                                    Utility.setPrefe(fileName, "caiyun", responseText);
+                                    Utility.saveTime(fileName, type);
                                     callBack.callBackCaiyun(caiyunData);
                                 }else {
                                     callBack.callBackError();
-                                    Utility.showToast(context, "获取天气数据失败");
+                                    Utility.toastUtil("获取天气数据失败");
                                 }
                                 break;
                             default:
@@ -95,7 +95,7 @@ public class RequestWeather {
                             callBack.callBackHefeng(hefengData);
                         }else {
                             callBack.callBackError();
-                            Utility.showToast(context, "获取天气数据失败");
+                            Utility.toastUtil("获取天气数据失败");
                         }
                         break;
                     case 2:
@@ -104,7 +104,7 @@ public class RequestWeather {
                             callBack.callBackCaiyun(caiyunData);
                         }else {
                             callBack.callBackError();
-                            Utility.showToast(context, "获取天气数据失败");
+                            Utility.toastUtil("获取天气数据失败");
                         }
                         break;
                     default:

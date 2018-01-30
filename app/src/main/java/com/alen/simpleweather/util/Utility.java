@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.alen.simpleweather.MyApplication;
 import com.alen.simpleweather.gson.CaiyunData;
 import com.alen.simpleweather.gson.MyCity;
 import com.alen.simpleweather.gson.HefengData;
@@ -61,11 +62,11 @@ public class Utility {
         }
     }
     //toast工具
-    public static void showToast(Context context,  String msg) {
+    public static void toastUtil(String msg) {
         if (toast == null) {
-            toast = Toast.makeText(context,msg,  Toast.LENGTH_SHORT);
+            toast = Toast.makeText(MyApplication.getInstance(), "简单天气:" + msg,  Toast.LENGTH_SHORT);
         } else {
-            toast.setText(msg);
+            toast.setText("简单天气:" + msg);
         }
         toast.show();
     }
@@ -113,8 +114,8 @@ public class Utility {
     }
 
     //设置字体
-    public static void setTypeFace(Context context, TextView[] textViews) {
-        Typeface typeface = Typeface.createFromAsset(context.getAssets(), "fonts/Miui-Light.ttf");
+    public static void setTypeFace(TextView[] textViews) {
+        Typeface typeface = Typeface.createFromAsset(MyApplication.getInstance().getAssets(), "fonts/Miui-Light.ttf");
         for (TextView textView : textViews) {
             textView.setTypeface(typeface);
         }
@@ -138,22 +139,22 @@ public class Utility {
     }
 
     //获取更新时间差
-    public static long getTime(Context context, String fileName, String key){
+    public static long getTime(String fileName, String key){
         long currentTime=System.currentTimeMillis();
-        String txt = getPrefe(context, fileName, key);
+        String txt = getPrefe(fileName, key);
         txt = txt == null ? "1500000000000":txt;
         long updateTime = Long.parseLong(txt);
         return (currentTime - updateTime)/1000;
     }
 
     //保存更新时间
-    public static void saveTime(Context context, String fileName, int type){
-        Utility.setPrefe(context, fileName, "upDataTime"+type, System.currentTimeMillis()+"");
+    public static void saveTime(String fileName, int type){
+        Utility.setPrefe(fileName, "upDataTime"+type, System.currentTimeMillis()+"");
     }
 
     //获取List
-    public static List<MyCity> getList(Context context){
-        String listTxt = Utility.getPrefe(context, "list", "list");
+    public static List<MyCity> getList(){
+        String listTxt = Utility.getPrefe("list", "list");
         if (listTxt != null){
             return new Gson().fromJson(listTxt, new TypeToken<List<MyCity>>(){}.getType());
         }else {
@@ -162,23 +163,23 @@ public class Utility {
     }
 
     //保存更新的list
-    public static void saveList(Context context, int position, String street, String province, String city, String lonlat){
-        saveList(context, position, street, province, city, lonlat, null, 0);
+    public static void saveList(int position, String street, String province, String city, String lonlat){
+        saveList(position, street, province, city, lonlat, null, 0);
     }
-    public static void saveList(Context context, int position, String street, String province, String city, String lonlat, String tmp, int code){
-        List list = getList(context);
+    public static void saveList(int position, String street, String province, String city, String lonlat, String tmp, int code){
+        List list = getList();
         if (list.size() != 0 && position>=0){
             list.set(position, new MyCity(street, province, city, lonlat, tmp, code));
         }else {
             list.add(new MyCity(street, province, city, lonlat, tmp, code));
         }
         String json = new Gson().toJson(list);
-        Utility.setPrefe(context, "list", "list", json);
+        Utility.setPrefe("list", "list", json);
     }
 
     //获取数据库对象
-    public static SQLiteDatabase getDB(Context context){
-        String DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
+    public static SQLiteDatabase getDB(){
+        String DB_PATH = MyApplication.getInstance().getApplicationInfo().dataDir + "/databases/";
         String DB_NAME = "city.db";
 
         File file = new File(DB_PATH);
@@ -187,7 +188,7 @@ public class Utility {
             file.mkdir();
             try {
                 // 得到 assets 目录下我们实现准备好的 SQLite 数据库作为输入流
-                InputStream is = context.getAssets().open(DB_NAME);
+                InputStream is = MyApplication.getInstance().getAssets().open(DB_NAME);
                 // 输出流
                 OutputStream os = new FileOutputStream(DB_PATH + DB_NAME);
 
@@ -211,16 +212,16 @@ public class Utility {
     }
 
     //获取与设置SharedPreferences
-    public static String getPrefe(Context context, String fileName, String key){
-        SharedPreferences prefe = context.getSharedPreferences(fileName,MODE_PRIVATE);
+    public static String getPrefe(String fileName, String key){
+        SharedPreferences prefe = MyApplication.getInstance().getSharedPreferences(fileName,MODE_PRIVATE);
         String value = prefe.getString(key,null);
         if (value != null){
             return value;
         }
         return null;
     }
-    public static void setPrefe(Context context, String fileName, String key, String value){
-        SharedPreferences.Editor editor = context.getSharedPreferences(fileName,MODE_PRIVATE).edit();
+    public static void setPrefe(String fileName, String key, String value){
+        SharedPreferences.Editor editor = MyApplication.getInstance().getSharedPreferences(fileName,MODE_PRIVATE).edit();
         editor.putString(key, value);
         editor.apply();
     }

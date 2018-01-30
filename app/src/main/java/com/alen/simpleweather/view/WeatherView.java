@@ -32,7 +32,7 @@ public class WeatherView<T extends IBaseWeatherData> extends View {
     // 默认的宽度 dp
     protected static final int DEFAULT_MINWIDTH = 60;
     // 圆点画笔 配 置
-    protected static final int[] DOTCOLOR = {Color.parseColor("#24c3f1"), Color.parseColor("#24c3f1")};
+    protected static final int[] DOTCOLOR = {Color.parseColor("#74b4e2"), Color.parseColor("#74b4e2")};
 
     protected static final int WEADOTRADIU = 2;
     // 默认画布的背景色
